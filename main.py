@@ -4,6 +4,7 @@ from tkinter import filedialog
 from openpyxl import load_workbook
 import os
 from tika import parser
+import pyperclip
 
 wb = load_workbook("EXCEL.xlsx")
 
@@ -22,7 +23,7 @@ def submit():
         filedata = (raw['content'].split(" "))
 
         def indexing():
-
+            global FreeCells
             FreeCells = []
             for cell in ws["e"]:
                 if cell.value == None:
@@ -40,6 +41,14 @@ def submit():
             ws[dayscount].value = filedata[filedata.index('Class') + 5][6:8]
             ws[addadfee].value = filedata[filedata.index('10.00')]
 
+
+        date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
+        accountdesc = filedata[filedata.index('Summary') + 3]
+        readingdesc = " بقراءة " + filedata[filedata.index('Capacity:') + 5][:-16] + " "
+        averagecons = int(filedata[filedata.index('Quantity:') + 1][:-13]) / int(filedata[filedata.index('Class') + 5][6:8])
+        average = "ومعدل استهلاك " + str(int(averagecons)) + " "
+        extratext = "في اليوم من تاريخ "
+
         if filedata[filedata.index('Summary') + 3] == '10054716660':
             path = "C:\\Users\\LENOVO\\Downloads\\42"
             filename = filedata[filedata.index('Class') + 3][5:12]
@@ -55,9 +64,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 42 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 42 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -76,9 +84,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 5 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 5 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -97,9 +104,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 11 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 11 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -118,9 +124,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 27 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 27 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -139,9 +144,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 34 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 34 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -160,9 +164,8 @@ def submit():
 
             indexing()
 
-            date = filedata[filedata.index('Class') + 2][7:17] + " الى " + filedata[filedata.index('Class') + 3][5:15]
-            sanadDesc = "تم سداد شقة 44 من تاريخ "
-            finalDesc = sanadDesc + date
+            sanadDesc = "سداد شقة 44 حساب رقم "
+            finalDesc = sanadDesc + accountdesc + readingdesc + average + extratext + date
 
             descs.append(finalDesc)
 
@@ -170,10 +173,27 @@ def submit():
             pass
 
     wb.save("EXCEL.xlsx")
-    frame2 = Frame(window)
+
+    frame2 = Frame(window).pack()
     data_string3 = StringVar()
     data_string3.set(descs)
-    label = Entry(frame2, textvariable=data_string3).pack()
+    listbox = Listbox(frame2, listvariable=data_string3, font = ("Arial", 10), bd= 0, width= 100, fg= "black", borderwidth=6, relief="solid", justify= CENTER)
+    listbox.pack(pady=10)
+
+    def printt():
+        currentselect = listbox.get(ANCHOR)
+        pyperclip.copy(currentselect)
+
+    button3 = Button(frame2, command=printt, text="Copy", font = ("Arial", 20), bd= 0, fg= "black").pack()
+
+    button1.config(state=DISABLED)
+    button2.config(state=DISABLED)
+
+
+
+
+
+
 
 
 window = Tk()
@@ -192,8 +212,14 @@ entry = Entry(frameMain, state= "readonly", textvariable= data_string, width= 37
 data_string2.set("30010522932 - 30010522923 - 30029501703")
 entry2 = Entry(frameMain, state= "readonly", textvariable= data_string2, width= 37, font = ("Arial", 20), bd= 0, fg= "black").pack()
 
-button1 = Button(frameMain, text= "Attach files", background= "white", font= ("Arial", 20), command= filesget).pack(pady= 20)
-button2 = Button(frameMain, text= "Submit", background= "white", font= ("Arial", 20), command= submit).pack()
+button1 = Button(frameMain, text= "Attach files", background= "white", font= ("Arial", 20), command= filesget)
+button1.pack(pady= 20)
+button2 = Button(frameMain, text= "Submit", background= "white", font= ("Arial", 20), command= submit)
+button2.pack()
+
+
+
+
 
 window.mainloop()
 
