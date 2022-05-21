@@ -11,3 +11,4 @@ It gets the data from the PDF receipts, autofills the Excel files they use to ke
 - Optimizing software to run faster.
 - Automating tasks in the real workspace.
 - Dealing with Arabic named files and directories.
+- Printing Arabic variables correctly.
